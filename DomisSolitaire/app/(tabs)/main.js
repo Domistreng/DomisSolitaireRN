@@ -1,3 +1,6 @@
+/**
+ * Created by ggoma on 2016. 11. 27..
+ */
 import React from 'react';
 import {
     StyleSheet,
