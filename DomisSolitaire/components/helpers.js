@@ -1,22 +1,18 @@
-/**
- * Created by ggoma on 2016. 11. 27..
- */
 export function cardSize(w) {
     const size = w;
     //calculate padding
-    const width = size/7 - 4;
-    const height = size/5 - 4;
-    return {width, height}
+    const width = size / 7 - 4;
+    const height = size / 5 - 4;
+    return { width, height };
 }
 
 export function createDeck() {
-    let suite = ['c', 's', 'h', 'd'];
-    let numbers = ['a', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'j', 'q', 'k'];
-    let deck = [];
+    const suite = ['c', 's', 'h', 'd'];
+    const numbers = ['a', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'j', 'q', 'k'];
+    const deck = [];
 
-
-    for(i = 0; i < suite.length ; i++) {
-        for(j = 0; j < numbers.length; j++) {
+    for (let i = 0; i < suite.length; i++) {
+        for (let j = 0; j < numbers.length; j++) {
             const id = numbers[j] + suite[i];
             deck.push(id);
         }
@@ -26,10 +22,11 @@ export function createDeck() {
 }
 
 export function shuffle(d) {
-    let deck = d;
-    for (let i = d.length; i; i--) {
+    // Make a shallow copy to avoid mutating the original array
+    let deck = [...d];
+    for (let i = deck.length; i; i--) {
         let j = Math.floor(Math.random() * i);
-        [d[i - 1], d[j]] = [d[j], d[i - 1]];
+        [deck[i - 1], deck[j]] = [deck[j], deck[i - 1]];
     }
     return deck;
 }
@@ -87,4 +84,4 @@ export const imageMap = {
     'ad': require('../img/ad.png'),
     'ah': require('../img/ah.png'),
     'as': require('../img/as.png')
-}
+};

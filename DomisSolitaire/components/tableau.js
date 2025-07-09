@@ -1,24 +1,18 @@
-/**
- * Created by ggoma on 2016. 11. 27..
- */
-/**
- * Created by ggoma on 2016. 11. 27..
- */
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
     View,
     Dimensions,
-    Text,
     StyleSheet
 } from 'react-native';
 
-const {width, height} = Dimensions.get('window');
-import {cardSize, image} from './helpers';
+const { width } = Dimensions.get('window');
+import { cardSize } from './helpers';
 import Card from './card';
 
 export default class EmptyDeck extends Component {
     constructor(props) {
         super(props);
+        this.deckRef = React.createRef();
         this.state = {
             id: props.id,
             number: props.number,
@@ -26,89 +20,100 @@ export default class EmptyDeck extends Component {
             width: cardSize(width).width,
             height: cardSize(width).height,
             highestStack: props.cards.length - 2
-        }
+        };
 
         this.deleted = this.deleted.bind(this);
     }
 
     componentDidMount() {
-        //weird hack
+        // Use the ref instead of string refs
         setTimeout(() => {
-            this.refs.deck.measure( (fx, fy, width, height, px, py) => {
-                this.setState({fx, fy, width, height, px, py});
-            }), 0
-        })
+            if (this.deckRef.current) {
+                this.deckRef.current.measure((fx, fy, width, height, px, py) => {
+                    this.setState({ fx, fy, width, height, px, py });
+                });
+            }
+        }, 0);
     }
 
     belongsInDeck(x, y, card) {
-        const {px, py, width, height, id, number} = this.state;
-        /*
-         valid zone:
-         width: (px) ~ (px + width)
-         height: (py) ~ (py + height)
-         */
-        if( (x > px &&  x < (px + width)) && (y > py && y < (py + height + 10 * number))){
+        const { px, py, width, height, id, number } = this.state;
+        if (
+            px !== undefined &&
+            py !== undefined &&
+            (x > px && x < (px + width)) &&
+            (y > py && y < (py + height + 10 * number))
+        ) {
             console.log('landed on', id);
             this.check(card);
             return true;
         }
-        return false
+        return false;
     }
 
     check(card) {
-        //check condition then
-        console.log('highest stack:', this.state.highestStack);
-        this.setState({cards: this.state.cards.concat(card)});
+        this.setState((prevState) => ({
+            cards: prevState.cards.concat(card)
+        }));
     }
-
 
     deleted(id) {
-        console.log(id , 'was deleted');
-        let {cards} = this.state;
-        cards.pop();
-        console.log('left in deck', cards);
-        this.setState({cards, highestStack: cards.length - 2});
-
+        let { cards } = this.state;
+        cards = cards.slice(0, -1); // Remove the last card
+        this.setState({
+            cards,
+            highestStack: cards.length - 2
+        });
     }
 
-
     renderCards() {
-        const {cards, highestStack} = this.state;
-        // console.log('re rendering');
+        const { cards, highestStack } = this.state;
         return cards.map((c, i) => {
-            // console.log('putting soure', c);
-            if(i+1 == cards.length ) {
+            if (i + 1 === cards.length) {
+                // Top card: draggable
                 return (
-                    <View key={i} style={{position: 'absolute', top: 10 * i}}>
-                        <Card ref={i} key={i} faceDown={false} releasedOn={this.props.releasedOn} deleted={this.deleted}
-                              draggable={true} source={c} />
+                    <View key={i} style={{ position: 'absolute', top: 10 * i }}>
+                        <Card
+                            key={i}
+                            faceDown={false}
+                            releasedOn={this.props.releasedOn}
+                            deleted={this.deleted}
+                            draggable={true}
+                            source={c}
+                        />
                     </View>
-                )
-            } else if (i > highestStack){
+                );
+            } else if (i > highestStack) {
+                // Cards above highestStack: not draggable, face up
                 return (
-                    <View key={i} style={{position: 'absolute', top: 10 * i}}>
-                        <Card key={i} faceDown={false} releasedOn={this.props.releasedOn} deleted={this.deleted}
-                              draggable={false} source={c} />
+                    <View key={i} style={{ position: 'absolute', top: 10 * i }}>
+                        <Card
+                            key={i}
+                            faceDown={false}
+                            releasedOn={this.props.releasedOn}
+                            deleted={this.deleted}
+                            draggable={false}
+                            source={c}
+                        />
                     </View>
-                )
+                );
             } else {
+                // Lower cards: face down
                 return (
-                    <View key={i} style={{position: 'absolute', top: 10 * i}}>
+                    <View key={i} style={{ position: 'absolute', top: 10 * i }}>
                         <Card faceDown={true} releasedOn={this.props.releasedOn} />
                     </View>
-                )
+                );
             }
-
-        })
+        });
     }
 
     render() {
-        const {width, height} = this.state;
+        const { width, height } = this.state;
         return (
-            <View ref='deck' style={{width, height, margin: 2, }}>
+            <View ref={this.deckRef} style={{ width, height, margin: 2 }}>
                 {this.renderCards()}
             </View>
-        )
+        );
     }
-
 }

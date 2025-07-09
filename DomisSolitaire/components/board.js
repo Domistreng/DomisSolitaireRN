@@ -1,11 +1,8 @@
-/**
- * Created by ggoma on 2016. 11. 27..
- */
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
-View,
-Text,
-StyleSheet
+  View,
+  Text,
+  StyleSheet
 } from 'react-native';
 
 import Foundation from './foundation';
@@ -13,84 +10,109 @@ import Card from './card';
 import Tableau from './tableau';
 import Stock from './stock';
 
-import {createDeck, shuffle} from './helpers';
+import { createDeck, shuffle } from './helpers';
 
 export default class Board extends Component {
-    constructor() {
-        super();
+  constructor(props) {
+    super(props);
 
-        let deck = shuffle(createDeck());
-        //7 tableau
-        let tableau = [];
-        for(i = 0; i < 7; i++) {
-            let temp = [];
-            for(j = 0; j <= i; j++) {
-                temp.push(deck.pop());
-            }
-            tableau.push({id: 't'+i, number: i, cards: temp});
-        }
-
-
-        this.state = {
-            foundations: [{id: 1}, {id: 2}, {id: 3}, {id: 4}],
-            tableau: tableau,
-            stock: deck,
-        };
-        this.releasedOn = this.releasedOn.bind(this);
+    let deck = shuffle(createDeck());
+    // 7 tableau
+    let tableau = [];
+    for (let i = 0; i < 7; i++) { // Added 'let' for i
+      let temp = [];
+      for (let j = 0; j <= i; j++) { // Added 'let' for j
+        temp.push(deck.pop());
+      }
+      tableau.push({ id: 't' + i, number: i, cards: temp });
     }
 
+    this.state = {
+      foundations: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }],
+      tableau: tableau,
+      stock: deck,
+    };
 
-    releasedOn(x, y, card) {
-        const {foundations, tableau} = this.state;
-        let valid = false;
-        foundations.map((deck) => {
-            if(this.refs[deck.id].belongsInDeck(x, y, card)) {
-                valid = true;
-            }
-        })
+    // Create refs for foundations and tableau
+    this.foundationRefs = {};
+    this.tableauRefs = {};
 
-        tableau.map((t) => {
-            if(this.refs[t.id].belongsInDeck(x, y, card)) {
-                valid = true;
-            }
-        })
+    this.releasedOn = this.releasedOn.bind(this);
+  }
 
-        return valid;
+  releasedOn(x, y, card) {
+    const { foundations, tableau } = this.state;
+    let valid = false;
 
-    }
+    foundations.forEach((deck) => {
+      const ref = this.foundationRefs[deck.id];
+      if (ref && ref.current && ref.current.belongsInDeck(x, y, card)) {
+        valid = true;
+      }
+    });
 
-    renderFoundations() {
-        const {foundations} = this.state;
-        return foundations.map((deck) => {
-            return <Foundation id={deck.id} key={deck.id} ref={deck.id}/>
-        })
-    }
+    tableau.forEach((t) => {
+      const ref = this.tableauRefs[t.id];
+      if (ref && ref.current && ref.current.belongsInDeck(x, y, card)) {
+        valid = true;
+      }
+    });
 
-    renderTableau() {
-        const {tableau} = this.state;
-        return tableau.map((t, i) => {
-            return <Tableau ref={t.id} id={t.id} number={t.number} releasedOn={this.releasedOn} key={i} cards={t.cards}/>
-        })
-    }
+    return valid;
+  }
 
-    render() {
-        return (
-            <View style={{flex: 1, paddingTop: 20, backgroundColor: '#277714'}}>
-                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                    <View>
-                        <Stock cards={this.state.stock} releasedOn={this.releasedOn}/>
-                    </View>
-                    <View style={{flexDirection: 'row'}}>
-                        {this.renderFoundations()}
-                    </View>
-                </View>
-                <View style={{flexDirection: 'row'}}>
-                    {this.renderTableau()}
-                </View>
+  renderFoundations() {
+    const { foundations } = this.state;
+    return foundations.map((deck) => {
+      // Create ref if it doesn't exist
+      if (!this.foundationRefs[deck.id]) {
+        this.foundationRefs[deck.id] = React.createRef();
+      }
+      return (
+        <Foundation
+          id={deck.id}
+          key={deck.id}
+          ref={this.foundationRefs[deck.id]}
+        />
+      );
+    });
+  }
 
+  renderTableau() {
+    const { tableau } = this.state;
+    return tableau.map((t, i) => {
+      // Create ref if it doesn't exist
+      if (!this.tableauRefs[t.id]) {
+        this.tableauRefs[t.id] = React.createRef();
+      }
+      return (
+        <Tableau
+          ref={this.tableauRefs[t.id]}
+          id={t.id}
+          number={t.number}
+          releasedOn={this.releasedOn}
+          key={i}
+          cards={t.cards}
+        />
+      );
+    });
+  }
 
-
-            </View>
-        )
-    }
+  render() {
+    return (
+      <View style={{ flex: 1, paddingTop: 20, backgroundColor: '#277714' }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <View>
+            <Stock cards={this.state.stock} releasedOn={this.releasedOn} />
+          </View>
+          <View style={{ flexDirection: 'row' }}>
+            {this.renderFoundations()}
+          </View>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          {this.renderTableau()}
+        </View>
+      </View>
+    );
+  }
 }

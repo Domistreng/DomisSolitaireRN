@@ -9,7 +9,7 @@ import {
     StatusBar,
 } from 'react-native';
 
-import Board from './components/board';
+import Board from '../../components/board';
 
 export default class App extends React.Component {
     render() {
