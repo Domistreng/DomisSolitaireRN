@@ -31,6 +31,17 @@ export function shuffle(d) {
     return deck;
 }
 
+export function getColor(cardId) {
+    let tempColor = cardId[cardId.length - 1]
+    if (tempColor == "d" || tempColor == "h") {
+        return("red")
+    }
+    else {
+        return("black")
+    }
+    return retColor
+}
+
 export const imageMap = {
     '2c': require('../img/2c.png'),
     '2d': require('../img/2d.png'),

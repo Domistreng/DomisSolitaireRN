@@ -6,7 +6,7 @@ import {
 } from 'react-native';
 
 const { width } = Dimensions.get('window');
-import { cardSize } from './helpers';
+import { cardSize, getColor } from './helpers';
 import Card from './card';
 
 export default class EmptyDeck extends Component {
@@ -36,7 +36,12 @@ export default class EmptyDeck extends Component {
         }, 0);
     }
 
-    belongsInDeck(x, y, card) {
+    belongsInDeck(x, y, card, currentCard = null) {
+        if (getColor(currentCard) == getColor(card))
+        {
+            return false;
+        }
+        console.log(currentCard, card)
         const { px, py, width, height, id, number } = this.state;
         if (
             px !== undefined &&

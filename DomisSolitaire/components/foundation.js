@@ -36,7 +36,7 @@ export default class EmptyDeck extends Component {
         this.setState({cards: this.state.cards.concat(card)});
     }
 
-    belongsInDeck(x, y, card) {
+    belongsInDeck(x, y, card, currentCard = null) {
         const {px, py, width, height, id} = this.state;
         if ((x > px && x < (px + width)) && (y > py && y < (py + height))) {
             console.log(card, 'landed on', id);
