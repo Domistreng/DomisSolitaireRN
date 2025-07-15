@@ -39,7 +39,14 @@ export function getColor(cardId) {
     else {
         return("black")
     }
-    return retColor
+}
+
+export function getNumber(cardId) {
+    if ((cardId[0] + cardId[1]).isNaN()) {
+        return cardId[0]
+    }
+    else
+        return (cardId[0] + cardId[1])
 }
 
 export const imageMap = {
