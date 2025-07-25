@@ -52,10 +52,8 @@ export default class Board extends Component {
     });
 
     tableau.forEach((t) => {
-      console.log(t)
-      let currentCard = (t["cards"][(t["cards"].length - 1)])
       const ref = this.tableauRefs[t.id];
-      if (ref && ref.current && ref.current.belongsInDeck(x, y, card, currentCard)) {
+      if (ref && ref.current && ref.current.belongsInDeck(x, y, card)) {
         valid = true;
       }
     });

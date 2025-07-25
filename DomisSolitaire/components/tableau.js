@@ -6,7 +6,7 @@ import {
 } from 'react-native';
 
 const { width } = Dimensions.get('window');
-import { cardSize, getColor } from './helpers';
+import { cardSize, getColor, getNumber } from './helpers';
 import Card from './card';
 
 export default class EmptyDeck extends Component {
@@ -36,20 +36,25 @@ export default class EmptyDeck extends Component {
         }, 0);
     }
 
-    belongsInDeck(x, y, card, currentCard = null) {
+    belongsInDeck(x, y, card) {
+        let currentCard = (this.state.cards[this.state.cards.length-1])
+        console.log(currentCard, " - ", card)
         if (getColor(currentCard) == getColor(card))
         {
             return false;
         }
-        console.log(currentCard, card)
+        // console.log(currentCard, card)
+        // console.log(getNumber(currentCard))
         const { px, py, width, height, id, number } = this.state;
         if (
             px !== undefined &&
             py !== undefined &&
             (x > px && x < (px + width)) &&
             (y > py && y < (py + height + 10 * number))
+            // Need to make y less sensitive
         ) {
             console.log('landed on', id);
+            console.log(currentCard)
             this.check(card);
             return true;
         }

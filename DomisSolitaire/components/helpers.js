@@ -42,11 +42,24 @@ export function getColor(cardId) {
 }
 
 export function getNumber(cardId) {
-    if ((cardId[0] + cardId[1]).isNaN()) {
-        return cardId[0]
+    if (cardId[0] + cardOd[1] == "10") {
+        return(10)
     }
-    else
-        return (cardId[0] + cardId[1])
+    else if (!isNaN(parseFloat((cardId[0])))) {
+        return(cardId[0])
+    }
+    else {
+        if (cardId[0] == "j")
+            return 11
+        if (cardId[0] == "q")
+            return 12
+        if (cardId[0] == "k")
+            return 13
+        if (cardId[0] == "a")
+            return 1
+    }
+    return (-1)
+
 }
 
 export const imageMap = {
