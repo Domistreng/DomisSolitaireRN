@@ -37,8 +37,10 @@ export default class EmptyDeck extends Component {
     }
 
     belongsInDeck(x, y, card) {
+        if (this.state.cards.length == 0) {
+            return(false)
+        }
         let currentCard = (this.state.cards[this.state.cards.length-1])
-        console.log(currentCard, " - ", card)
         if (getColor(currentCard) == getColor(card))
         {
             return false;
@@ -50,8 +52,7 @@ export default class EmptyDeck extends Component {
             px !== undefined &&
             py !== undefined &&
             (x > px && x < (px + width)) &&
-            (y > py && y < (py + height + 10 * number))
-            // Need to make y less sensitive
+            (y > (py+ 10 * number) && y < (py + height + 10 * number))
         ) {
             console.log('landed on', id);
             console.log(currentCard)
@@ -62,8 +63,10 @@ export default class EmptyDeck extends Component {
     }
 
     check(card) {
+        // Added card
         this.setState((prevState) => ({
-            cards: prevState.cards.concat(card)
+            cards: prevState.cards.concat(card),
+            number: prevState.number + 1
         }));
     }
 
